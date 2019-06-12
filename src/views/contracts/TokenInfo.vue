@@ -150,7 +150,7 @@
        * 根据合约地址获取合约详情
        */
       getContractsInfoByContractsAddress(contractsaddress) {
-        this.$post('/', 'getContract', [contractsaddress])
+        this.$post('https://api.nuls.io/', 'getContract', [contractsaddress])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -168,7 +168,7 @@
        * 获取通证交易列表
        */
       async getAccountTxList(page, rows, address, contractsAddress) {
-        this.$post('/', 'getTokenTransfers', [page, rows, address, contractsAddress])
+        this.$post('https://api.nuls.io/', 'getTokenTransfers', [page, rows, address, contractsAddress])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -196,7 +196,7 @@
        * 获取持币账户列表
        */
       async getAccountTokensList(page, rows, contractsAddress) {
-        this.$post('/', 'getContractTokens', [page, rows, contractsAddress])
+        this.$post('https://api.nuls.io/', 'getContractTokens', [page, rows, contractsAddress])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

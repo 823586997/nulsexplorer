@@ -1,6 +1,6 @@
 <template>
   <div class="c_list" v-loading="nodeListLoading">
-    <div class="c_list_search">
+    <!-- <div class="c_list_search">
       <div class="type_select fl">
         <SelectBar v-model="nodeTypeRegion" :typeOptions="nodeTypeOptions" typeName="nodeType"
                    @change="changeNodeType"></SelectBar>
@@ -15,7 +15,7 @@
         <i class="iconfont fr click" :class="viewList ? 'icon-list_icon':'icon-chart_icon'"
            @click="viewList = !viewList"></i>
       </div>
-    </div>
+    </div> -->
     <div v-show="!viewList" class="c_tabs">
       <el-table :data="searchData" stripe border style="width: 100%">
         <el-table-column label="" width="30">
@@ -49,12 +49,22 @@
     </div>
 
     <div v-show="viewList" class="card-info">
-      <div class="card fl click" @click="toUrl('consensusInfo',item.txHash)" v-for="item in searchData"
+      <div class="card fl click" v-for="item in nodeList"
            :key="item.agentId">
         <h3 class="tabs_title tabs_infos" :class="item.agentAlias ? '' : 'uppercase'">
-          {{ item.agentAlias ? item.agentAlias : item.agentId }}
+          <div class='avatar'>
+              <div>
+                <img :src="item.avatar" alt="">
+              </div>
+          </div>
+          <!-- {{ item.agentAlias ? item.agentAlias : item.agentId }} -->
+          <i v-if="item.checkstatus == '0' && id == item.id " class="iconfont fr font18 buldGreen"></i>
+          <i v-if="item.checkstatus == '2' && id == item.id " class="iconfont fr font18 buldRed"></i>
+          <i v-if="item.checkstatus == '1' && id == item.id " class="iconfont fr font18 icon-await"></i>
           <i class="iconfont fr font18"
-             :class="item.status.toString() !=='0'? 'icon-consensus_icon': 'icon-wait_red_icon'"></i>
+              @click="toUrl('consensusInfo',item.id)"
+             :class="item.status !=='0'? 'icon-consensus_icon': 'icon-wait_red_icon'"></i>
+          <i @click='AlterMsg(item.id)' class="iconfont fr font18 el-icon-edit" v-if=" role == 'admin' || id == item.id"></i>
         </h3>
         <ul>
           <li class="font12 fl">{{$t('public.alias')}}<span
@@ -66,6 +76,15 @@
           <li class="font12 fl">{{$t('public.entrust')}}<span class="fr">{{item.totalDeposit }}<label
                   class="fCN"> NULS</label></span></li>
           <li class="font12 fl">{{$t('public.creditValue')}}<span class="fr">{{item.creditValue}}</span></li>
+          <li class="font12 fl newly">相关链接
+            <span class="fr">{{item.link}}</span>
+          </li>
+          <li class="font12 fl newly">联系方式
+            <span class="fr">{{item.phone}} / {{item.email}}</span>
+          </li>
+          <li class="font12 fl newly">描述
+            <span class="fr">{{item.description | filterFun}}</span>
+          </li>
         </ul>
       </div>
     </div>
@@ -74,7 +93,8 @@
 
 <script>
   import SelectBar from '@/components/SelectBar';
-  import {timesDecimals} from '@/api/util.js'
+  import {timesDecimals} from '@/api/util.js';
+  import axios from 'axios';
 
   export default {
     data() {
@@ -109,28 +129,31 @@
           total: 0,
           page: 1,
           rows: 200,
-        }
+        },
+        id: localStorage.node_id,
+        role: localStorage.role
       }
     },
     components: {
       SelectBar
     },
     created() {
-      this.getConsensusNodes(this.pager.page, this.pager.rows, this.nodeStatusRegion)
+      // this.getConsensusNodes(this.pager.page, this.pager.rows, this.nodeStatusRegion)
+      this.getNodeMsg();
     },
     computed: {
       //数据筛选
       searchData: function () {
-        let search = this.searchValue;
-        //console.log(this.nodeList);
-        if (search) {
-          return this.nodeList.filter(function (product) {
-            return Object.keys(product).some(function (key) {
-              return String(product[key]).toLowerCase().indexOf(search.toLowerCase()) > -1
-            })
-          })
-        }
-        return this.nodeList;
+        // let search = this.searchValue;
+        // //console.log(this.nodeList);
+        // if (search) {
+        //   return this.nodeList.filter(function (product) {
+        //     return Object.keys(product).some(function (key) {
+        //       return String(product[key]).toLowerCase().indexOf(search.toLowerCase()) > -1
+        //     })
+        //   })
+        // }
+        // return this.nodeList;
       },
 
     },
@@ -138,34 +161,43 @@
       /**
        * 获取共识列表
        */
-      async getConsensusNodes(page, rows, type) {
-        this.$post('/', 'getConsensusNodes', [page, rows, type])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              for (let item of response.result.list) {
-                item.deposit = timesDecimals(item.deposit, 8);
-                item.bozhengjin = item.deposit;
-                item.totalDeposit = Number(timesDecimals(item.totalDeposit, 8)).toFixed(2);
-              }
-              this.nodeList = response.result.list;
-              this.nodeListLoading = false;
-            }
-          }).catch((error) => {
-          console.log(error)
+      // async getConsensusNodes(page, rows, type) {
+        // this.$post('/api.nuls.io/', 'getConsensusNodes', [page, rows, type])
+        //   .then((response) => {
+        //     console.log(response);
+        //     if (response.hasOwnProperty("result")) {
+        //       for (let item of response.result.list) {
+        //         item.deposit = timesDecimals(item.deposit, 8);
+        //         item.bozhengjin = item.deposit;
+        //         item.totalDeposit = Number(timesDecimals(item.totalDeposit, 8)).toFixed(2);
+        //       }
+        //       this.nodeList = response.result.list;
+        //       this.nodeListLoading = false;
+        //     }
+        //   }).catch((error) => {
+        //   console.log(error)
+        // })
+      // },
+      getNodeMsg(){
+        let url = 'http://nuls.yqkkn.com/nodes/0';
+        axios.get(url)
+        .then( (res) => {
+          let data = res.data;
+          this.nodeList = data.result;
+          this.nodeListLoading = false;
+          console.log(this.nodeList)
         })
       },
-
       /**
        * 路径跳转
        * @param name
        * @param hash
        * @param tabName
        */
-      toUrl(name, hash, tabName = 'first') {
+      toUrl(name,id) {
         this.$router.push({
           name: name,
-          query: {hash: hash, tabName: tabName}
+          query: { id : id }
         })
       },
 
@@ -199,7 +231,9 @@
         this.nodeStatusRegion = type;
         this.getConsensusNodes(this.pager.page, this.pager.rows, this.nodeStatusRegion)
       },
-
+      AlterMsg(id){
+        this.$router.push({path:'/alterMsg',query:{ id:id }});
+      },
       /**
        * 数组排序
        */
@@ -224,6 +258,14 @@
         };
         return arr.sort(compare(name));
       },
+    },
+    filters:{
+        filterFun(value) {
+          if(value&& value.length > 20) {
+          value= value.substring(0,20)+ '…';
+          }
+          return value;
+        }
     },
   }
 </script>
@@ -302,7 +344,26 @@
         }
         .tabs_infos {
           padding: 0 0 0 20px;
-          .icon-wait_red_icon, .icon-consensus_icon {
+          display: flex;
+          .avatar{
+            flex: 1;
+            position: relative;
+            >div{
+              width: 30px;
+              height: 30px;
+              border-radius: 50%;
+              position: absolute;
+              top: 0;
+              bottom: 0;
+              margin: auto 0;
+              >img{
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+              }
+            }
+          }
+          .icon-wait_red_icon, .icon-consensus_icon,.el-icon-edit {
             margin: 15px 30px 0 0;
             color: @Ncolour;
           }
@@ -312,7 +373,7 @@
         }
         ul {
           background-color: @Bcolour1;
-          height: 92px;
+          height: 180px;
           padding: 0 30px;
           li {
             width: 50%;
@@ -322,6 +383,17 @@
               width: 150px;
               text-align: left;
               color: @Mcolour;
+            }
+          }
+          .newly{
+            width: 100%;
+            span {
+              width: 79%;
+              text-align: left;
+              color: @Mcolour;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
             }
           }
         }
@@ -360,6 +432,26 @@
     }
 
   }
-
+.buldGreen{
+  width: 18px;
+  height: 18px;
+  margin: 15px 30px 0 0;
+  background: url('../../static/images/icon/buldGreen.png') no-repeat center;
+  background-size: 18px;
+}
+.buldRen{
+  width: 18px;
+  height: 18px;
+  margin: 15px 30px 0 0;
+  background: url('../../static/images/icon/buldRed.png') no-repeat;
+  background-size: 18px;
+}
+.icon-await{
+  width: 18px;
+  height: 18px;
+  margin: 15px 30px 0 0;
+  background: url('../../static/images/icon/await.png') no-repeat;
+  background-size: 18px;
+}
 
 </style>

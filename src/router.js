@@ -77,10 +77,19 @@ export default new Router({
       component: resolve => require(['@/views/contracts/ContractsInfo'], resolve)
     },
     {
+      path: '/alterMsg',
+      name: '/alterMsg',
+      component: resolve => require(['@/views/consensus/AlterMsg'],resolve)
+    },
+    {
       path: '/token/info',
       name: 'tokenInfo',
       component: resolve => require(['@/views/contracts/TokenInfo'], resolve)
     },
-
+    {
+      path: '/login',
+      name: 'login',
+      component: resolve => require(['@/views/Login/Login'],resolve)
+    }
   ]
 })

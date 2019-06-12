@@ -25,7 +25,8 @@
                    :inactive-text="$t('rotationInfo.rotationInfo1')">
         </el-switch>
         <el-table :data="rotationList" stripe border style="width: 100%; margin:45px 0 100px 0;"
-                  v-loading="rotationInfoLoading">
+              v-loading="rotationInfoLoading"    >
+                  
           <el-table-column label="" width="30">
           </el-table-column>
           <el-table-column :label="$t('public.height')" width="120" align="left">
@@ -82,7 +83,7 @@
         //轮次详情
         rotationInfo: [],
         //轮次详情加载动画
-        rotationInfoLoading: true,
+        rotationInfoLoading: false,
         //隐藏开关
         hideSwitch: false,
         //列表信息
@@ -101,7 +102,7 @@
        * 获轮次详细信息根据轮次编号
        */
       getRotationInfo(rotation) {
-        this.$post('/', 'getRoundInfo', [rotation])
+        this.$post('https://api.nuls.io/', 'getRoundInfo', [rotation])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

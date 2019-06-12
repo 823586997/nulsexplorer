@@ -160,7 +160,7 @@
        * 获取所有合约列表
        */
       getContractList(page, rows, boolean, boolean1) {
-        this.$post('/', 'getContractList', [page, rows, boolean, boolean1])
+        this.$post('https://api.nuls.io/', 'getContractList', [page, rows, boolean, boolean1])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

@@ -286,7 +286,7 @@
        * 根据hash获取交易详情
        */
       async getTxInfoByHash(hash) {
-        this.$post('/', 'getTx', [hash])
+        this.$post('https://api.nuls.io/', 'getTx', [hash])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

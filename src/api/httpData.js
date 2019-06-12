@@ -327,5 +327,3 @@ export const getNetworkInfo= () => fetch('/network/info');
  * @returns {Promise}
  */
 export const getNetworkIp= () => fetch('/network/nodes');
-
-

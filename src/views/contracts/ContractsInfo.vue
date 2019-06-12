@@ -161,7 +161,7 @@
        * 根据合约地址获取合约详情
        */
       getContractsInfoByContractsAddress(address) {
-        this.$post('/', 'getContract', [address])
+        this.$post('https://api.nuls.io/', 'getContract', [address])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -191,7 +191,7 @@
        * 获取共识列表
        */
       async getConsensusTxList(page, rows, type, contractsAddress) {
-        this.$post('/', 'getContractTxList', [page, rows, type, contractsAddress])
+        this.$post('https://api.nuls.io/', 'getContractTxList', [page, rows, type, contractsAddress])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

@@ -64,7 +64,7 @@
        * 获地址列表
        */
       getAddressList(page, rows, sort) {
-        this.$post('/', 'getCoinRanking', [page, rows, sort])
+        this.$post('https://api.nuls.io/', 'getCoinRanking', [page, rows, sort])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

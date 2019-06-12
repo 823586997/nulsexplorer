@@ -164,7 +164,7 @@
        *  首页全局搜索框
        **/
       clickSearch() {
-        this.$post('/', 'search', [this.homeSearch])
+        this.$post('https://api.nuls.io/', 'search', [this.homeSearch])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -205,7 +205,7 @@
        * 获取节点数量
        */
       getNodeNumber() {
-        this.$post('/', 'getConsensusNodeCount', [])
+        this.$post('https://api.nuls.io/', 'getConsensusNodeCount', [])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -218,7 +218,7 @@
        * 获取NULS数量信息
        */
       getNULSNumber() {
-        this.$post('/', 'getCoinInfo', [])
+        this.$post('https://api.nuls.io/', 'getCoinInfo', [])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -244,7 +244,7 @@
        * 获取轮次列表
        */
       getRotationList() {
-        this.$post('/', 'getBestRoundInfo', [])
+        this.$post('https://api.nuls.io/', 'getBestRoundInfo', [])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -265,7 +265,7 @@
        * 获取共识年化奖励率
        */
       getYearRateData(time) {
-        this.$post('/', 'getAnnulizedRewardStatistical', [time])
+        this.$post('https://api.nuls.io/', 'getAnnulizedRewardStatistical', [time])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -281,7 +281,7 @@
        * 获取14天交易历史数据
        */
       get14DaysData(time) {
-        this.$post('/', 'getTxStatistical', [time])
+        this.$post('https://api.nuls.io/', 'getTxStatistical', [time])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

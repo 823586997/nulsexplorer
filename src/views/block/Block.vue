@@ -72,18 +72,9 @@
        * 获取块列表
        */
       getBlockList(pager, rows, packAddress, isShow) {
-        this.$post('/', 'getBlockList', [pager, rows, packAddress, isShow])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              for (let item of response.result.list) {
-                item.createTime = moment(getLocalTime(item.createTime)).format('YYYY-MM-DD HH:mm:ss');
-              }
-              this.blockList = response.result.list;
-              this.pager.total = response.result.totalCount;
-              this.blockLoading = false;
-            }
-          })
+        // 
+        
+        
       },
 
       /**

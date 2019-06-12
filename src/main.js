@@ -8,6 +8,9 @@ import {post} from './api/https'
 import VeLine from 'v-charts/lib/line.common'
 import VePie from 'v-charts/lib/pie.common'
 import 'v-charts/lib/style.css'
+import  VueQuillEditor from 'vue-quill-editor'
+
+Vue.use(VueQuillEditor)
 
 Vue.component(VeLine.name, VeLine);
 Vue.component(VePie.name, VePie);
@@ -15,7 +18,6 @@ Vue.component(VePie.name, VePie);
 Vue.config.productionTip = false;
 //定义全局变量
 Vue.prototype.$post = post;
-
 new Vue({
   store,
   router,

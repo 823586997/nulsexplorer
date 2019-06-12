@@ -121,7 +121,7 @@
        **/
       async uploadFiles(contractsAddress, jobSpecFile) {
         console.log(jobSpecFile);
-        this.$post('/', 'validateContractCode', [contractsAddress, jobSpecFile])
+        this.$post('https://api.nuls.io/', 'validateContractCode', [contractsAddress, jobSpecFile])
           .then((response) => {
             console.log(response);
             if (response.result) {
@@ -153,7 +153,7 @@
        * 获取合约代码目录
        **/
       async getContractCodeTree(contractsAddress) {
-        this.$post('/', 'getContractCodeTree', [contractsAddress])
+        this.$post('https://api.nuls.io/', 'getContractCodeTree', [contractsAddress])
           .then((response) => {
             //console.log(response);
             if (response.result) {
@@ -168,17 +168,8 @@
        * 获取合约代码
        **/
       async getContractCode(contractsAddress,path) {
-        this.$post('/', 'getContractCode', [contractsAddress,path])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              this.codeInfo=response.result;
-            }else {
-              this.codeInfo='';
-            }
-          }).catch((error) => {
-          console.log(error)
-        })
+        // 
+        
       },
 
       /**

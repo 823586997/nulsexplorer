@@ -1,6 +1,6 @@
 <template>
   <div class="consensus-info bg-gray" v-loading="nodeInfoLoading">
-    <div class="bg-white">
+    <!-- <div class="bg-white">
       <h2 class="title w1200 font16 fw uppercase">{{nodeInfo.agentId}}</h2>
       <div class="cards w1200">
         <ul class="cards-ul">
@@ -23,9 +23,21 @@
           </li>
         </ul>
       </div>
-    </div>
+    </div> -->
     <div class="info_tabs w1200">
-      <h3 class="tabs_title tabs_header">{{$t('public.basicInfo')}}</h3>
+      <h3 class="tabs_title tabs_header">
+        <p>{{$t('public.basicInfo')}}</p>
+        <span v-if=" nodeInfo.id == mineId && nodeInfo.checkstatus == '0'" class='msg icon-buldGreen' ></span>
+        <span v-if=" nodeInfo.id == mineId && nodeInfo.checkstatus == '2'" class='msg icon-buldRed'></span>
+        <span v-if=" role == 'admin' && nodeInfo.checkstatus == '1'" class='msg icon-yes' @click='judgeYes()'></span>
+        <span v-if=" role == 'admin' && nodeInfo.checkstatus == '1'" class='msg icon-no' @click='judgeNo()'></span>
+        <span v-if=" role == 'admin' || mineId == nodeInfo.id" class='msg el-icon-edit' @click='AlterMsg(nodeInfo.id)'></span>
+      </h3>
+      <div class='mine_avatar'>
+        <div>
+            <img :src=" nodeInfo.avatar ? nodeInfo.avatar : require('../../static/images/avatar/default.jpg')" alt="">
+        </div>
+      </div>
       <ul class="ul">
         <li class="tabs_infos fl">
           <p>{{$t('public.createAddress')}}
@@ -36,7 +48,7 @@
           </p>
         </li>
         <li class="tabs_infos fl">
-          <p>Hash<span class="click" @click="toUrl('transactionInfo',nodeInfo.txHash)">{{nodeInfo.txHashs}} </span></p>
+          <p>Hash<span class="click" @click="toUrl('transactionInfo',nodeInfo.txHash)">{{nodeInfo.txHash}} </span></p>
         </li>
         <li class="tabs_infos fl"><p>
           {{$t('public.alias')}}<span>{{ nodeInfo.agentAlias ? nodeInfo.agentAlias : '-' }}</span></p></li>
@@ -54,7 +66,7 @@
         <li class="tabs_infos fl">
           <p>{{$t('public.bond')}}<span>{{nodeInfo.deposit/100000000}}<span class="fCN">&nbsp;NULS</span></span></p>
         </li>
-        <li class="tabs_infos fl"><p>{{$t('consensusInfo.consensusInfo3')}}<span>{{nodeInfo.version}}</span></p></li>
+        <!-- <li class="tabs_infos fl"><p>{{$t('consensusInfo.consensusInfo3')}}<span>{{nodeInfo.version}}</span></p></li> -->
         <li class="tabs_infos fl"><p>{{$t('public.proportion')}}<span>{{nodeInfo.commissionRate}}%</span></p></li>
         <li class="tabs_infos fl">
           <p>
@@ -74,14 +86,23 @@
           <p>{{$t('consensusInfo.consensusInfo16')}}
             <span>{{nodeInfo.commissionReward/100000000}}<span class="fCN">&nbsp;NULS</span></span></p>
         </li>
-        <li class="tabs_infos fl"><p>{{$t('public.createTime')}}<span>{{nodeInfo.time}}</span></p></li>
+        <li class="tabs_infos fl"><p>{{$t('public.createTime')}}<span>{{nodeInfo.createTime}}</span></p></li>
         <li class="tabs_infos fl">
           <p>{{$t('public.allEntrust')}}<span>{{nodeInfo.totalDeposit/100000000}}<span
                   class="fCN">&nbsp;NULS</span></span></p>
         </li>
+        <li class="tabs_infos fl">
+          <p>相关链接<span><a :href="nodeInfo.link">{{nodeInfo.link}}</a></span></p>
+        </li>
+        <li class="tabs_infos fl">
+          <p>联系方式<span>{{nodeInfo.phone}} / {{nodeInfo.email}}</span></p>
+        </li>
+        <li class="tabs_infos fl">
+          <p>描述<span>{{nodeInfo.description | filterFun}}</span></p>
+        </li>
       </ul>
     </div>
-    <div class="w1200 bg-gray">
+    <!-- <div class="w1200 bg-gray">
       <el-col :span="24">
         <el-tabs v-model="activeNames" @tab-click="handleClicks">
           <el-tab-pane :label="$t('consensusInfo.consensusInfo7')" name="first" v-loading="blockListLoading">
@@ -209,13 +230,15 @@
           </el-tab-pane>
         </el-tabs>
       </el-col>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
   import moment from 'moment'
   import {getLocalTime, superLong, copys, timeDifference} from '@/api/util.js'
+  import axios from 'axios';
+  // import {formatDate} from '../../common/filters';
 
   export default {
     data() {
@@ -243,7 +266,9 @@
           {value: 1, label: '2'}
         ],
         depositValue: 2,
-
+        id : this.$route.query.id,
+        mineId: localStorage.node_id ? localStorage.node_id : '',
+        role: localStorage.role ? localStorage.role : '',
         pager: {
           total: 0,
           page: 1,
@@ -252,17 +277,15 @@
       }
     },
     components: {},
-    created() {
-      this.getNodeInfo(this.$route.query.hash);
-    },
     mounted() {
-      setTimeout(() => {
-        if (this.activeNames === 'first') {
-          this.getBlockList(this.pager.page, this.pager.rows, this.nodeInfo.packingAddress, false)
-        } else {
-          this.getConsensusDepositList(this.pager.page, this.pager.rows, this.nodeInfo.txHash)
-        }
-      }, 800);
+      this.getNodeInfo();
+      // setTimeout(() => {
+      //   if (this.activeNames === 'first') {
+      //     this.getBlockList(this.pager.page, this.pager.rows, this.nodeInfo.packingAddress, false)
+      //   } else {
+      //     this.getConsensusDepositList(this.pager.page, this.pager.rows, this.nodeInfo.txHash)
+      //   }
+      // }, 800);
     },
     methods: {
 
@@ -270,23 +293,66 @@
        * 获取节点详情
        * @param hash
        */
-      getNodeInfo(hash) {
-        this.$post('/', 'getConsensusNode', [hash])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              response.result.time = moment(getLocalTime(response.result.createTime)).format('YYYY-MM-DD HH:mm:ss');
-              response.result.roundPackingTime = moment(getLocalTime(response.result.roundPackingTime)).format('YYYY-MM-DD HH:mm:ss');
-              this.times = timeDifference(response.result.createTime);
-              response.result.txHashs = superLong(response.result.txHash, 20);
-              this.nodeInfo = response.result;
-              this.nodeInfoLoading = false;
-            }
-          }).catch((error) => {
-          console.log(error)
+      getNodeInfo() {
+        // this.$post('/api.nuls.io/', 'getConsensusNode', [hash])
+        //   .then((response) => {
+        //     //console.log(response);
+        //     if (response.hasOwnProperty("result")) {
+        //       response.result.time = moment(getLocalTime(response.result.createTime)).format('YYYY-MM-DD HH:mm:ss');
+        //       response.result.roundPackingTime = moment(getLocalTime(response.result.roundPackingTime)).format('YYYY-MM-DD HH:mm:ss');
+        //       this.times = timeDifference(response.result.createTime);
+        //       response.result.txHashs = superLong(response.result.txHash, 20);
+        //       this.nodeInfo = response.result;
+        //       this.nodeInfoLoading = false;
+        //     }
+        //   }).catch((error) => {
+        //   console.log(error)
+        // })
+        // console.log(this.id);
+        let url = 'http://nuls.yqkkn.com/node/'+this.id;
+        axios.get(url)
+        .then( (res) => {
+          let data = res.data;
+          // console.log(data);
+          this.nodeInfo = data.result;
+          this.nodeInfoLoading = false;
         })
       },
-
+      AlterMsg(id){
+        this.$router.push({path:'/alterMsg',query:{ id:id }});
+      },
+      judgeYes(){
+        let url = 'http://nuls.yqkkn.com/admin/nodePass';
+        axios.post(url,{
+          cmd:'1',
+          body:{
+             nodeId : this.nodeInfo.id
+          }
+        }).then( (res) => {
+          let data = res.data;
+          if( data.code == 0 ){
+            this.$message('审核成功');
+          }else{
+            this.$message(data.msg);
+          }
+        })
+      },
+      judgeNo(){
+        let url = 'http://nuls.yqkkn.com/admin/nodeReject';
+        axios.post(url,{
+          cmd:'1',
+          body:{
+             nodeId : this.nodeInfo.id
+          }
+        }).then( (res) => {
+          let data = res.data;
+          if( data.code == 0 ){
+            this.$message('审核成功');
+          }else{
+            this.$message(data.msg);
+          }
+        })
+      },
       /**
        * 复制方法
        * @param sting
@@ -300,7 +366,7 @@
        * 获取块列表
        */
       getBlockList(pager, rows, packAddress, boolean) {
-        this.$post('/', 'getBlockList', [pager, rows, packAddress, boolean])
+        this.$post('https://api.nuls.io/', 'getBlockList', [pager, rows, packAddress, boolean])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -327,7 +393,7 @@
        * 获取惩罚列表
        */
       getPunishList(pager, rows, type, agentAddress) {
-        this.$post('/', 'getPunishList', [pager, rows, type, agentAddress])
+        this.$post('https://api.nuls.io/', 'getPunishList', [pager, rows, type, agentAddress])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -352,7 +418,7 @@
        * 获委托列表
        */
       getConsensusDepositList(pager, rows, hash) {
-        this.$post('/', 'getConsensusDeposit', [pager, rows, hash])
+        this.$post('https://api.nuls.io/', 'getConsensusDeposit', [pager, rows, hash])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -376,7 +442,7 @@
        * 获取委托历史列表
        */
       getConsensusCancelDepositList(pager, rows, hash, type) {
-        this.$post('/', 'getAllConsensusDeposit', [pager, rows, hash, type])
+        this.$post('https://api.nuls.io/', 'getAllConsensusDeposit', [pager, rows, hash, type])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -465,6 +531,14 @@
       },
 
     },
+    filters:{
+        filterFun(value) {
+          if(value&& value.length > 20) {
+          value= value.substring(0,20)+ '…';
+          }
+          return value;
+        }
+    },
   }
 </script>
 
@@ -487,12 +561,13 @@
       }
     }
     .info_tabs {
-      margin: 0 auto 20px;
+      margin: 50px 0 auto 20px;
+      padding-bottom: 40px;
       .ul {
-        min-height: 290px;
+        min-height: 325px;
       }
       @media screen and (max-width: 1000px) {
-        margin: 0 2.5% 1rem;
+        margin: 50px 0 2.5% 1rem;
         width: 95%;
         .ul {
           li {
@@ -516,7 +591,78 @@
     .el-tabs {
       margin-bottom: 60px;
     }
-
+    .tabs_infos{
+      >p{
+        >span{
+              width: 70%;
+              text-align: right;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              >a{
+                color: #608FFF;
+              }
+        }
+      }
+    }
   }
-
+  .tabs_title{
+    display: flex;
+    >p{
+      flex: 1;
+    }
+    .msg{
+      margin-right: 20px;
+      text-align: right;
+      display:block;
+      line-height: 48px;
+      color: #7db46d;
+    }
+  }
+  .mine_avatar{
+    width: 100%;
+    background: white;
+    border: 1px solid #DFE4EF;
+    border-top: none;
+    padding: 5px 0;
+    >div{
+      height: 100px;
+      width: 100px;
+      border-radius: 50%;
+      margin: 0 auto;
+      >img{
+        width:100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+    }
+  }
+  .icon-yes{
+      width: 18px;
+      height: 18px;
+      margin: 15px 30px 0 0;
+      background: url('../../static/images/icon/yes.png') no-repeat;
+      background-size: 18px;
+  }
+  .icon-no{
+      width: 18px;
+      height: 18px;
+      margin: 15px 30px 0 0;
+      background: url('../../static/images/icon/no.png') no-repeat;
+      background-size: 18px;
+  }
+.icon-buldGreen{
+  width: 18px;
+  height: 18px;
+  margin: 15px 30px 0 0;
+  background: url('../../static/images/icon/buldGreen.png') no-repeat center;
+  background-size: 18px;
+}
+.icon-buldRed{
+  width: 18px;
+  height: 18px;
+  margin: 15px 30px 0 0;
+  background: url('../../static/images/icon/buldRed.png') no-repeat;
+  background-size: 18px;
+}
 </style>

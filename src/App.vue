@@ -23,4 +23,13 @@ export default {
   .app{
     background-color: #ffffff;
   }
+  #app {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
+html, body {
+    height: 100%;
+    background-color: #ffffff;
+}
 </style>

@@ -116,7 +116,7 @@
        * 获取交易历史数据统计
        */
       getYearRateData(time) {
-        this.$post('/', 'getTxStatistical', [time])
+        this.$post('https://api.nuls.io/', 'getTxStatistical', [time])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -142,7 +142,7 @@
        * 获交易列表
        */
       getTxList(page, rows, type, show) {
-        this.$post('/', 'getTxList', [page, rows, type, show])
+        this.$post('https://api.nuls.io/', 'getTxList', [page, rows, type, show])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {

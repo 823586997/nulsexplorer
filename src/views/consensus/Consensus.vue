@@ -1,6 +1,6 @@
 <template>
   <div class="consensus">
-    <div class="top-chart w1200 ">
+    <!-- <div class="top-chart w1200 ">
       <div class="chart_title">
         <h2 class="fl font18">{{$t('consensus.consensus0')}}</h2>
         <div class="fr">
@@ -31,16 +31,16 @@
                  :legend-visible="false"
                  :colors="colors"
                  :settings="chartSettings"
-                 :loading="timeRateDataLoading"></ve-line>
+                 :loading="timeRateDataLoading"></ve-line>-->
        <!-- <ChartBar showID="mountNodes" :chartData="chartData" width="1200"></ChartBar>-->
-      </div>
-    </div>
+      <!-- </div> 
+    </div> -->
     <div class="info bg-gray">
       <el-tabs v-model="activeName" @tab-click="handleClick" class="w1200 tab_consensus">
         <el-tab-pane :label="$t('consensus.consensus2')" name="first">
           <ConsensusList></ConsensusList>
         </el-tab-pane>
-        <el-tab-pane :label="$t('consensus.consensus3')" name="second">
+        <!-- <el-tab-pane :label="$t('consensus.consensus3')" name="second">
           <div class="cards">
             <ul class="cards-ul">
               <li class="cards-li fl">
@@ -86,7 +86,7 @@
                              align="left"></el-table-column>
           </el-table>
           <paging :pager="pager" @change="pagesList"></paging>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </div>
   </div>
@@ -170,7 +170,7 @@
        * 获取交易历史数据统计
        */
       getYearRateData(time) {
-        this.$post('/', 'getConsensusStatistical', [time])
+        this.$post('https://api.nuls.io/', 'getConsensusStatistical', [time])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -207,7 +207,7 @@
        *  获取当前轮次信息
        **/
       async getRoundInfo() {
-        this.$post('/', 'getBestRoundInfo', [])
+        this.$post('https://api.nuls.io/', 'getBestRoundInfo', [])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -225,20 +225,8 @@
        * 获取轮次列表
        */
       async getRoundList(page, rows) {
-        this.$post('/', 'getRoundList', [page, rows])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              for (let item of response.result.list) {
-                item.startTime = moment(getLocalTime(item.startTime)).format('YYYY-MM-DD HH:mm:ss');
-                item.endTime = moment(getLocalTime(item.endTime)).format('YYYY-MM-DD HH:mm:ss');
-              }
-              this.roundList = response.result.list;
-              this.pager.total = response.result.totalCount;
-            }
-          }).catch((error) => {
-          console.log(error)
-        })
+       
+       
       },
 
       /**

@@ -26,6 +26,7 @@
           </el-input>
         </div>
         <div class="language font14 fr" @click="selectLanguage(lang,true)">{{lang === 'en' ? '简体中文':'English' }}</div>
+        <div class="language font14 fr" @click='Login()'>{{ id ? '退出' : '登录'}}</div>
       </div>
       <div class="mobile_ico fr">
         <i class="el-icon-menu" @click="showMobile = !showMobile"></i>
@@ -53,6 +54,7 @@
   import logo from './../assets/img/logo.svg'
   import testnetLogo from './../assets/img/logo-test-black.svg'
   import MenuBar from '@/components/MenuBar';
+  import axios from 'axios';
 
   export default {
     data() {
@@ -72,6 +74,7 @@
         lang: 'en',
         //移动端显示
         showMobile: false,
+        id: localStorage.node_id
       };
     },
     components: {
@@ -111,12 +114,25 @@
       blurSearch() {
         this.topLong = false;
       },
-
+      /*登录退出 */
+      Login(){
+        if(this.id){
+          let url = 'http://nuls.yqkkn.com/passport/logout';
+          axios.get(url)
+          .then( (res) => {
+            this.$message('您已成功退出登录');
+            localStorage.clear();
+            location.reload();
+          })
+        }else{
+          this.$router.push('/login');
+        }
+      },
       /**
        *  顶部搜索框
        **/
       clickSearch() {
-        this.$post('/', 'search', [this.searchValue])
+        this.$post('https://api.nuls.io/', 'search', [this.searchValue])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -210,7 +226,7 @@
       .header_language {
         width: 406px;
         .top-search {
-          width: 320px;
+          width: 250px;
           height: 30px;
           margin: 25px 10px 0 0;
           text-align: right;

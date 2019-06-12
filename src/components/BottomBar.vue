@@ -33,7 +33,7 @@
        * 获取最新高度
        */
       getBestBlockHeader() {
-        this.$post('/', 'getBestBlockHeader', [])
+        this.$post('https://api.nuls.io/', 'getBestBlockHeader', [])
           .then((response) => {
             //console.log(response)
             if (response.hasOwnProperty("result")) {
@@ -46,7 +46,7 @@
        * 获取节点数量
        */
       getNodeNumber() {
-        this.$post('/', 'getConsensusNodeCount', [])
+        this.$post('https://api.nuls.io/', 'getConsensusNodeCount', [])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -59,13 +59,8 @@
        * 获取NULS数量信息
        */
       getNULSNumber() {
-        this.$post('/', 'getCoinInfo', [])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              this.$store.commit('SET_NULSNUMBER', response.result);
-            }
-          })
+  
+  
       },
 
       /**

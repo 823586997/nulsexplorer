@@ -319,7 +319,7 @@
        * 获地址详细信息
        */
       getAddressInfo(address) {
-        this.$post('/', 'getAccount', [address])
+        this.$post('https://api.nuls.io/', 'getAccount', [address])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -376,7 +376,7 @@
        * 根据地址获取交易列表
        */
       getTxListByAddress(page, rows, address, type, boolean) {
-        this.$post('/', 'getAccountTxs', [page, rows, address, type, boolean])
+        this.$post('https://', 'getAccountTxs', [page, rows, address, type, boolean])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -407,7 +407,7 @@
        * 根据地址获取Token交易列表
        */
       getTokenListByAddress(page, rows, address, contractAddress) {
-        this.$post('/', 'getTokenTransfers', [page, rows, address, contractAddress])
+        this.$post('https://api.nuls.io/', 'getTokenTransfers', [page, rows, address, contractAddress])
           .then((response) => {
             //console.log(response);
             if (response.hasOwnProperty("result")) {
@@ -448,19 +448,8 @@
        * 根据地址获取NRC-20列表
        */
       getNrc20ListByAddress(page, rows, address) {
-        this.$post('/', 'getAccountTokens', [page, rows, address])
-          .then((response) => {
-            //console.log(response);
-            if (response.hasOwnProperty("result")) {
-              for (let item of response.result.list) {
-                item.balance = timesDecimals(item.balance, item.decimals);
-              }
-              this.nrc20List = response.result.list;
-              this.nrc20ListPager.total = response.result.totalCount;
-            }
-          }).catch((error) => {
-          console.log(error)
-        })
+        // 
+        
       },
 
       /**
