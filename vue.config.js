@@ -19,16 +19,16 @@ module.exports = {
         threshold: 10240,
         minRatio: 0.8
       }));
-      config.externals = {
-        'vue': 'Vue',
-        'vue-router': 'VueRouter',
-        'moment': 'moment',
-        /*'element-ui': 'ELEMENT',*/
-      }
+      // config.externals = {
+      //   'vue': 'Vue',
+      //   'vue-router': 'VueRouter',
+      //   'moment': 'moment',
+      //   /*'element-ui': 'ELEMENT',*/
+      // }
     }
   },
 
-  baseUrl: undefined,
+  baseUrl: './',
   outputDir: undefined,
   assetsDir: undefined,
   runtimeCompiler: undefined,
@@ -54,6 +54,34 @@ module.exports = {
         pathRewrite: {
           '^/api': '/'
         }
+      },
+      '/nodes':{   // 获取所有节点
+        target:'http://172.21.75.140:8080/',
+        changeOrigin:true,  
+      },
+      '/node':{  // 获取单个
+        target:'http://172.21.75.140:8080/',
+        changeOrigin:true,  
+      },
+      '/passport/login':{  //  登录
+        target:'http://172.21.75.140:8080/',
+        changeOrigin:true,
+      },
+      '/admin/updateNodeInfo':{  // 修改节点
+        target:'http://172.21.75.140:8080/',
+        changeOrigin:true,
+      },
+      '/admin/nodeReject':{  // 审核节点
+        target:'http://172.21.75.140:8080/',
+        changeOrigin:true,
+      },
+      '/admin/nodePass':{  // 审核节点- 通过
+        target:'http://172.21.75.140:8080/',
+        changeOrigin:true,
+      },
+      '/passport/logout':{  // 退出
+        target:'http://172.21.75.140:8080/',
+        changeOrigin:true,
       }
     }
   }

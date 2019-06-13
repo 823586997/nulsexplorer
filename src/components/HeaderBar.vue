@@ -38,7 +38,8 @@
         <div class="mobile_menu">
           <MenuBar></MenuBar>
           <div class="cb"></div>
-          <div class="language font14 fr" @click="selectLanguage(lang,true)">{{lang === 'en' ? '简体中文':'English' }}</div>
+          <div class="language1 font14 fr" @click="selectLanguage(lang,true)">{{lang === 'en' ? '简体中文':'English' }}</div>
+          <div class="language2 font14 fr" @click='Login()'>{{ id ? '退出' : '登录'}}</div>
         </div>
       </div>
     </el-collapse-transition>
@@ -330,12 +331,24 @@
         right: 0;
         top: 3.4rem;
         z-index: 9999;
-        .language {
+        .language1 {
           display: initial;
           float: none;
           position: absolute;
           right: 0;
           top: 15rem;
+          height: 2rem;
+          line-height: 2rem;
+          width: 10rem;
+          background-color: #FFFFFF;
+          text-align: center;
+        }
+        .language2 {
+          display: initial;
+          float: none;
+          position: absolute;
+          right: 0;
+          top: 17rem;
           height: 2rem;
           line-height: 2rem;
           width: 10rem;
