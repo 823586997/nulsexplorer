@@ -15,7 +15,7 @@
     "echarts": "^4.1.0",
     "element-ui": "^2.4.5",
     "less-loader": "^4.1.0",
-    "moment": "^2.23.0",
+    "moment": "^2.29.4",
     "npm-login-module": "^1.0.0",
     "quill": "^1.3.6",
     "v-charts": "^1.19.0",
